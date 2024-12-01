@@ -117,6 +117,8 @@ In dieser Aufgabe analysieren wie die Zeit eines Kontextwechsels. Zu beginn möc
 
 *Ein Kontextwechsel ist der Vorgang, bei dem das Betriebssystem die CPU von einem Prozess oder Thread zu einem anderen wechselt. Dabei wird der Zustand des aktuellen Prozesses gespeichert und der Zustand des neuen Prozesses geladen. Dies ermöglicht Multitasking, hat aber auch einen gewissen Overhead, der die Leistung beeinflussen kann.*
 
+### Eigener Ansatz:
+
 Um die Kosten des Kontextwechsels zu messen, habe ich zwei Programme geschrieben. Die Programme haben jeweils zwei Threads indem sie hochzählen. In einem Programm wird nach jeder Zahl der Thread gewechselt um Kontextwechsel zu provozieren. Der andere Code ist meine Kontrollgruppe. Ich messe die Zeiten, die beide brauchen und kann die Zeiten dann vergleichen.
 Ein paar Ergebnisse:
 | Programm          | Context Switches | Ausführungszeit (Nanosekunden) |
@@ -135,7 +137,22 @@ Ein paar Ergebnisse:
 Kurze Auswertung:
 Die Programme mit Context-Switches benötigen im Durchschnitt 88.241.000 Nanosekunden, während die Programme ohne Context-Switches nur 1.911.000 Nanosekunden benötigen.
 
-Fazit:
+### Fazit:
 Die Analyse zeigt deutlich, dass die Ausführungszeit der Programme mit Context-Switches im Durchschnitt signifikant höher ist als die der Programme ohne Context-Switches. Tatsächlich dauert es im Schnitt etwa 46-mal länger (88.241.000 / 1.911.000 ≈ 46), wenn Context-Switches involviert sind. Diese zusätzliche Zeit wird durch den Overhead verursacht, der beim Wechseln zwischen verschiedenen Prozessen und Threads entsteht. Daher ist es oft vorteilhaft, Context-Switches zu minimieren, insbesondere in zeitkritischen Anwendungen, um die Leistung zu optimieren.
+
+### Ansatz mit Standardtool strace
+
+![image](https://github.com/user-attachments/assets/0b06fa33-dee4-4f59-97bc-3fb941a48380)
+
+Hier sieht man, dass futex über 99% der Zeit beansprucht. Futex ist hauptsächlich für den Kontextswitch verantwortlich. Die Kontrollgruppe sieht wie folgt aus.
+
+![image](https://github.com/user-attachments/assets/658c9148-acb3-4294-b28d-fde7b343e9d4)
+
+Futex taucht überhaupt nicht auf, weil hier kein Kontextwechsel stattfindet.
+
+### Fazit
+Mit strace, kann ich zusätzlich zur benötigten Zeit auch sehen, welcher Prozess, wie lange gedauert hat. Das ist praktisch um zu sehen, was den Prozess verlangsamt. Durch die beiden Tabellen wird deutlich, dass tatsächlich der Kontextwechsel (futex) Großteil der Zeit kostet.
+
+
 
 
