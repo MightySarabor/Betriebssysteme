@@ -101,5 +101,41 @@ Bei mir kam auf meinem Laptop konsistent etwas zwischen 95 Nanosekunden und 98 N
 Aus eigenem Interesse habe ich den gleichen Code nochmal ausgeführt, aber nicht getpid(), sondern syscall(SYS_getpid) ausgeführt, was den System-Call direkt im Kernen ausführt.
 Die Zeit hat sich bei mir nicht geändert. Das heißt, dass der System-Call-Wrapper sehr effizient arbeitet.
 
+## Aufgabe 3
+**Aufgabenstellung:**
+Ziel dieser Aufgabe soll es sein, die durchschnittliche Dauer eines Kontextwechsels auf einem System Ihrer Wahl empirisch zu 
+ermitteln. Denken Sie darüber nach, was ein Kontextwechsel im Detail ist, wie Sie die Kontextwechselzeiten überhaupt messen 
+und wie Sie mittels eines von Ihnen realisierten Programms diese Zeiten tatsächlich auch bestimmen können. Recherchieren Sie 
+anschließend, mit welchen Standardwerkzeugen (z.B. für das Profiling von Anwendungen) Kontextwechselzeiten ebenfalls 
+ermitteln werden können. Vergleichen Sie diese Zeiten mit Ihren ermittelten Werten und versuchen Sie eventuelle Diskrepanzen 
+zu begründen. Zusätzlich zu den unmittelbaren Zeitkosten eines Kontextwechsels, die sich aus der Ausführung der notwendigen 
+Aufgaben direkt ergeben, entstehen auch indirekte Kosten, die sich negativ auf die Anwendungsperformanz auswirken und die 
+nicht leicht quantifizierbar sind. Gehen Sie im Ergebnisbericht zu dieser Aufgabe auch auf diese indirekten Kosten ein und 
+versuchen Sie abzuschätzen, welche Auswirkungen sich daraus für die Effizienz der Anwendungsausführung ergeben. 
+
+In dieser Aufgabe analysieren wie die Zeit eines Kontextwechsels. Zu beginn möchte ich den Begriff definieren:
+
+*Ein Kontextwechsel ist der Vorgang, bei dem das Betriebssystem die CPU von einem Prozess oder Thread zu einem anderen wechselt. Dabei wird der Zustand des aktuellen Prozesses gespeichert und der Zustand des neuen Prozesses geladen. Dies ermöglicht Multitasking, hat aber auch einen gewissen Overhead, der die Leistung beeinflussen kann.*
+
+Um die Kosten des Kontextwechsels zu messen, habe ich zwei Programme geschrieben. Die Programme haben jeweils zwei Threads indem sie hochzählen. In einem Programm wird nach jeder Zahl der Thread gewechselt um Kontextwechsel zu provozieren. Der andere Code ist meine Kontrollgruppe. Ich messe die Zeiten, die beide brauchen und kann die Zeiten dann vergleichen.
+Ein paar Ergebnisse:
+| Programm          | Context Switches | Ausführungszeit (Nanosekunden) |
+|-------------------|------------------|--------------------------------|
+| context_switch    | Ja               | 19177000                       |
+| context_switch    | Ja               | 108247000                      |
+| context_switch    | Ja               | 102581000                      |
+| context_switch    | Ja               | 105654000                      |
+| context_switch    | Ja               | 105546000                      |
+| control_group     | Nein             | 485000                         |
+| control_group     | Nein             | 824000                         |
+| control_group     | Nein             | 449000                         |
+| control_group     | Nein             | 604000                         |
+| control_group     | Nein             | 7197000                        |
+
+Kurze Auswertung:
+Die Programme mit Context-Switches benötigen im Durchschnitt 88.241.000 Nanosekunden, während die Programme ohne Context-Switches nur 1.911.000 Nanosekunden benötigen.
+
+Fazit:
+Die Analyse zeigt deutlich, dass die Ausführungszeit der Programme mit Context-Switches im Durchschnitt signifikant höher ist als die der Programme ohne Context-Switches. Tatsächlich dauert es im Schnitt etwa 46-mal länger (88.241.000 / 1.911.000 ≈ 46), wenn Context-Switches involviert sind. Diese zusätzliche Zeit wird durch den Overhead verursacht, der beim Wechseln zwischen verschiedenen Prozessen und Threads entsteht. Daher ist es oft vorteilhaft, Context-Switches zu minimieren, insbesondere in zeitkritischen Anwendungen, um die Leistung zu optimieren.
 
 
