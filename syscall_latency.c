@@ -18,6 +18,7 @@ int main() {
         clock_gettime(CLOCK_MONOTONIC, &start); // CLOCK_MONOTONIC garantiert monotone Zeitmessung
 
         getpid(); // Ausführung des Beispiel-System-Calls
+        //syscall(SYS_getpid); Um direkt den SysCall im Kernel zu machen
 
         // Beende die Zeitmessung nach dem System-Call
         clock_gettime(CLOCK_MONOTONIC, &end);
