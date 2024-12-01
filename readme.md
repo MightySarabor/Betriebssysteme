@@ -81,11 +81,25 @@ Hier sehen wir sys_getpid im Kernel mit seiner Funktion.
 Wir sehen, dass getpid einfach return task_tgid_vnr(current); ausführt. Die Funktion task_tgid_vnr(current) gibt die TGID des aktuellen Prozesses zurück. Diese TGID ist normalerweise gleich der Prozess-ID (PID) des Prozesses.
 
 
-## Fazit
+### Fazit
 
 Als Fazit schließe ich aus der Aufgabe, dass der Ablauf vom System-Call-Wrapper zum eigentlichen System-Call im Kernel einem klar strukturierten Schema folgt: 
-Die System-Call-Wrapper, wie beispielsweise getpid(), sind häufig in Dateien wie /usr/include/unistd.h definiert und bieten eine benutzerfreundliche Schnittstelle für Entwickler.
- Diese Wrapper sind über die System-Call-Tabellen, die sich im Verzeichnis /linux/arch/x86/entry/syscalls/ befinden, mit den entsprechenden Kernel-Implementierungen verknüpft.
- Die Tabellen syscall_32.tbl und syscall_64.tbl ordnen die Wrapper den jeweiligen System-Call-Funktionen im Kernel zu und stellen so eine Verbindung zwischen der Benutzer- und der Kernel-Ebene her.
- Dieses Prinzip ist ein zentraler Bestandteil des Linux-Betriebssystems und ermöglicht eine effiziente Nutzung der Systemressourcen.
+Die System-Call-Wrapper, wie beispielsweise getpid(), sind häufig in Dateien wie /usr/include/unistd.h definiert und bieten eine benutzerfreundliche Schnittstelle für Entwickler. 
+Diese Wrapper sind über die System-Call-Tabellen, die sich im Verzeichnis /linux/arch/x86/entry/syscalls/ befinden, mit den entsprechenden Kernel-Implementierungen verknüpft. 
+Die Tabellen syscall_32.tbl und syscall_64.tbl ordnen die Wrapper den jeweiligen System-Call-Funktionen im Kernel zu und stellen so eine Verbindung zwischen der Benutzer- und der Kernel-Ebene her. 
+Dieses Prinzip ist ein zentraler Bestandteil des Linux-Betriebssystems und ermöglicht eine effiziente Nutzung der Systemressourcen.
+
+## Aufgabe 2
+**Aufgabenstellung:**
+Denken Sie über einem experimentellen Ansatz nach, die minimale Latenz bei der Ausführung eines System-Calls zu ermitteln. 
+Entwerfen Sie ein geeignetes Programm, um diese minimale Latenz zu bestimmen. Diskutieren Sie das Ergebnis. 
+
+Für die Analyse der minimalen Latenz eines System-Calls habe ich einen Code geschrieben. Den Code finden Sie in der Datei syscall_latency.c in diesem Repository.
+Der Code führt 1 000 000 mal den Systemcall getpid() aus und misst jeweils die Zeit. Die niedrigste Zeit aller Iterationen wird gespeichert. 
+
+Bei mir kam auf meinem Laptop konsistent etwas zwischen 95 Nanosekunden und 98 Nanosekunden raus. 
+Aus eigenem Interesse habe ich den gleichen Code nochmal ausgeführt, aber nicht getpid(), sondern syscall(SYS_getpid) ausgeführt, was den System-Call direkt im Kernen ausführt.
+Die Zeit hat sich bei mir nicht geändert. Das heißt, dass der System-Call-Wrapper sehr effizient arbeitet.
+
+
 
