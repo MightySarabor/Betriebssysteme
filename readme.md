@@ -28,7 +28,7 @@ Den System-Call-Wrapper getpid() habe ich in usr/inclunde/unistd.h gesucht. Dort
 ```c
 650:extern __pid_t getpid (void) __THROW;
 ```
-## Look-Up in der syscalls Tabelle
+### Look-Up in der syscalls Tabelle
 
 In der Ausgabe sehen wir die Deklaration von getpid(). Der Weg zum eigentlich System-Call ist in folgender Datei definiert.
 
