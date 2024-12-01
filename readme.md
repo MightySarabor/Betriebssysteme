@@ -28,6 +28,7 @@ Den System-Call-Wrapper getpid() habe ich in usr/inclunde/unistd.h gesucht. Dort
 ```c
 650:extern __pid_t getpid (void) __THROW;
 ```
+## Look-Up in der syscalls Tabelle
 
 In der Ausgabe sehen wir die Deklaration von getpid(). Der Weg zum eigentlich System-Call ist in folgender Datei definiert.
 
@@ -43,6 +44,7 @@ In der Ausgabe sehen wir die Deklaration von getpid(). Der Weg zum eigentlich Sy
 ```
 Das sind jeweils die Einträge für 64 Bit und 32 Bit Systeme. Hier wird der System-Call-Wrapper mit dem eigentlichen System-Call verknüpft, dessen Code im Kernel zu finden ist.
 
+### Definition des System-Calls im Kernel
 Im Kernel suchen wir also sys_getpid.
 
 **Befehl:**
@@ -79,7 +81,7 @@ Hier sehen wir sys_getpid im Kernel mit seiner Funktion.
 Wir sehen, dass getpid einfach return task_tgid_vnr(current); ausführt. Die Funktion task_tgid_vnr(current) gibt die TGID des aktuellen Prozesses zurück. Diese TGID ist normalerweise gleich der Prozess-ID (PID) des Prozesses.
 
 
-### Fazit
+## Fazit
 
 Als Fazit schließe ich aus der Aufgabe, dass der Ablauf vom System-Call-Wrapper zum eigentlichen System-Call im Kernel einem klar strukturierten Schema folgt: 
 Die System-Call-Wrapper, wie beispielsweise getpid(), sind häufig in Dateien wie /usr/include/unistd.h definiert und bieten eine benutzerfreundliche Schnittstelle für Entwickler.
